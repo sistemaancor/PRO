@@ -1,0 +1,26 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        String archivo = "C:/Users/Alumno/Desktop/usuarios.txt";
+        imprimirUsuarios(archivo);
+    }
+
+    public static void imprimirUsuarios(String archivo) {
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] usuario = linea.trim().split(", ");
+                System.out.println("Usuario:");
+                System.out.println("DNI: " + usuario[0]);
+                System.out.println("Nombre: " + usuario[1]);
+                System.out.println("Apellidos: " + usuario[2]);
+                System.out.println("Correo electrónico: " + usuario[3]);
+                System.out.println(); // Imprimir una línea en blanco para separar los usuarios
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+        }
+    }
