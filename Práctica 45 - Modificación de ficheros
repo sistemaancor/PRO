@@ -1,1 +1,126 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
+public class GestionUsuarios {
+
+    private static final String ARCHIVO = "usuarios.txt";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nMenú:");
+            System.out.println("1. Agregar usuario");
+            System.out.println("2. Eliminar usuario");
+            System.out.println("3. Buscar usuario por DNI");
+            System.out.println("4. Salir");
+            System.out.print("Seleccione una opción: ");
+            int opcion = scanner.nextInt();
+            scanner.nextLine(); // Limpiar el buffer del scanner
+
+            switch (opcion) {
+                case 1:
+                    agregarUsuario();
+                    break;
+                case 2:
+                    eliminarUsuario();
+                    break;
+                case 3:
+                    buscarUsuarioPorDNI();
+                    break;
+                case 4:
+                    System.out.println("Saliendo del programa...");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Opción no válida. Por favor, seleccione una opción del menú.");
+            }
+        }
+    }
+
+    private static void agregarUsuario() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARCHIVO, true))) {
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.println("\nAgregar Usuario");
+            System.out.print("Ingrese el DNI: ");
+            String dni = scanner.nextLine();
+            System.out.print("Ingrese el nombre: ");
+            String nombre = scanner.nextLine();
+            System.out.print("Ingrese los apellidos: ");
+            String apellidos = scanner.nextLine();
+            System.out.print("Ingrese el correo electrónico: ");
+            String correo = scanner.nextLine();
+
+            String nuevoUsuario = dni + ", " + nombre + ", " + apellidos + ", " + correo;
+            writer.write(nuevoUsuario);
+            writer.newLine();
+
+            System.out.println("Usuario agregado correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error al agregar usuario: " + e.getMessage());
+        }
+    }
+
+    private static void eliminarUsuario() {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("\nEliminar Usuario");
+            System.out.print("Ingrese el DNI del usuario a eliminar: ");
+            String dniEliminar = scanner.nextLine();
+
+            BufferedReader reader = new BufferedReader(new FileReader(ARCHIVO));
+            String linea;
+            StringBuilder contenidoNuevo = new StringBuilder();
+
+            while ((linea = reader.readLine()) != null) {
+                String[] usuario = linea.split(", ");
+                if (!usuario[0].equals(dniEliminar)) {
+                    contenidoNuevo.append(linea).append("\n");
+                }
+            }
+            reader.close();
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(ARCHIVO));
+            writer.write(contenidoNuevo.toString());
+            writer.close();
+
+            System.out.println("Usuario eliminado correctamente.");
+        } catch (IOException e) {
+            System.out.println("Error al eliminar usuario: " + e.getMessage());
+        }
+    }
+
+    private static void buscarUsuarioPorDNI() {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("\nBuscar Usuario por DNI");
+            System.out.print("Ingrese el DNI del usuario a buscar: ");
+            String dniBuscar = scanner.nextLine();
+
+            BufferedReader reader = new BufferedReader(new FileReader(ARCHIVO));
+            String linea;
+
+            while ((linea = reader.readLine()) != null) {
+                String[] usuario = linea.split(", ");
+                if (usuario[0].equals(dniBuscar)) {
+                    System.out.println("Usuario encontrado:");
+                    System.out.println("DNI: " + usuario[0]);
+                    System.out.println("Nombre: " + usuario[1]);
+                    System.out.println("Apellidos: " + usuario[2]);
+                    System.out.println("Correo electrónico: " + usuario[3]);
+                    reader.close();
+                    return;
+                }
+            }
+            reader.close();
+            System.out.println("Usuario no encontrado.");
+        } catch (IOException e) {
+            System.out.println("Error al buscar usuario: " + e.getMessage());
+        }
+    }
+}
